@@ -1,0 +1,21 @@
+{
+  "name": "origami-creatif",
+  "version": "1.0.0",
+  "description": "Site web Origami Créatif avec animations 3D",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "origami",
+    "three.js",
+    "3d"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
