@@ -29,6 +29,307 @@
         </div>
     </main>
 
-    <script src="src/asset/dev/Three.js"></script>
+    <!-- Nos Propositions Section -->
+    <section id="propositions" class="propositions">
+        <h2 class="section-title">Nos Propositions</h2>
+        <div class="propositions-grid">
+            <!-- Espace pour objet 3D -->
+            <div class="three-placeholder"></div>
+
+            <!-- Vidéo Bateau -->
+            <div class="video-card">
+                <iframe 
+                    src="https://www.youtube.com/embed/ZdPtowjRPL4" 
+                    title="Bateau en origami"
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <!-- Vidéo Cœur -->
+            <div class="video-card">
+                <iframe 
+                    src="https://www.youtube.com/embed/_0uPyMgHD0g" 
+                    title="Cœur en origami"
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <!-- Espace pour objet 3D -->
+            <div class="three-placeholder"></div>
+
+            <!-- Objet 3D: Avion en papier -->
+            <div class="three-placeholder" id="three-plane"></div>
+
+            <!-- Vidéo Avion -->
+            <div class="video-card">
+                <iframe 
+                    src="https://www.youtube.com/embed/-wL3wEKc6sg" 
+                    title="Avion en origami"
+                    frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Fonction pour créer un avion en papier 3D avec volume
+        function createPaperPlane() {
+            const plane = new THREE.Group();
+            
+            const paperMaterial = new THREE.MeshStandardMaterial({
+                color: 0xffffff,
+                roughness: 0.7,
+                metalness: 0.1,
+                flatShading: true,
+                side: THREE.DoubleSide
+            });
+
+            // Corps principal avec volume - partie gauche du V
+            const leftBodyGeometry = new THREE.BufferGeometry();
+            const leftBodyVertices = new Float32Array([
+                // Face externe gauche
+                0, 0.4, 2,        // Nez haut centre
+                0, 0, 2,          // Nez bas centre
+                -0.35, 0, -1,     // Arrière gauche bas
+                -0.35, 0.4, -1,   // Arrière gauche haut
+                
+                // Face interne gauche (vers le centre)
+                0, 0.2, 2,        // Nez centre
+                0, 0.05, 2,       // Nez bas centre
+                -0.05, 0.05, -1,  // Arrière centre bas
+                -0.05, 0.2, -1,   // Arrière centre haut
+            ]);
+            
+            const bodyIndices = [
+                // Face externe
+                0, 1, 2, 0, 2, 3,
+                // Face interne
+                4, 6, 5, 4, 7, 6,
+                // Face supérieure
+                0, 3, 7, 0, 7, 4,
+                // Face inférieure
+                1, 5, 6, 1, 6, 2,
+                // Face avant
+                0, 4, 5, 0, 5, 1,
+                // Face arrière
+                3, 2, 6, 3, 6, 7
+            ];
+            
+            leftBodyGeometry.setAttribute('position', new THREE.BufferAttribute(leftBodyVertices, 3));
+            leftBodyGeometry.setIndex(bodyIndices);
+            leftBodyGeometry.computeVertexNormals();
+            
+            const leftBody = new THREE.Mesh(leftBodyGeometry, paperMaterial);
+            plane.add(leftBody);
+
+            // Corps principal avec volume - partie droite du V
+            const rightBodyGeometry = new THREE.BufferGeometry();
+            const rightBodyVertices = new Float32Array([
+                // Face externe droite
+                0, 0.4, 2,
+                0, 0, 2,
+                0.35, 0, -1,
+                0.35, 0.4, -1,
+                
+                // Face interne droite
+                0, 0.2, 2,
+                0, 0.05, 2,
+                0.05, 0.05, -1,
+                0.05, 0.2, -1,
+            ]);
+            
+            rightBodyGeometry.setAttribute('position', new THREE.BufferAttribute(rightBodyVertices, 3));
+            rightBodyGeometry.setIndex(bodyIndices);
+            rightBodyGeometry.computeVertexNormals();
+            
+            const rightBody = new THREE.Mesh(rightBodyGeometry, paperMaterial);
+            plane.add(rightBody);
+
+            // Aile gauche avec épaisseur
+            const leftWingGeometry = new THREE.BufferGeometry();
+            const leftWingVertices = new Float32Array([
+                // Surface supérieure
+                -0.35, 0.4, 0.8,    // Attache avant
+                -0.35, 0.4, -1,     // Attache arrière
+                -2.2, 0.38, 0.1,    // Bout avant
+                -2.2, 0.38, -0.7,   // Bout arrière
+                
+                // Surface inférieure
+                -0.35, 0.32, 0.8,
+                -0.35, 0.32, -1,
+                -2.2, 0.3, 0.1,
+                -2.2, 0.3, -0.7,
+            ]);
+            
+            const wingIndices = [
+                // Face supérieure
+                0, 2, 1, 1, 2, 3,
+                // Face inférieure
+                4, 5, 6, 5, 7, 6,
+                // Bord avant
+                0, 4, 6, 0, 6, 2,
+                // Bord arrière
+                1, 3, 7, 1, 7, 5,
+                // Bout extérieur
+                2, 6, 7, 2, 7, 3,
+                // Bord intérieur
+                0, 1, 5, 0, 5, 4
+            ];
+            
+            leftWingGeometry.setAttribute('position', new THREE.BufferAttribute(leftWingVertices, 3));
+            leftWingGeometry.setIndex(wingIndices);
+            leftWingGeometry.computeVertexNormals();
+            
+            const leftWing = new THREE.Mesh(leftWingGeometry, paperMaterial);
+            plane.add(leftWing);
+
+            // Aile droite avec épaisseur
+            const rightWingGeometry = new THREE.BufferGeometry();
+            const rightWingVertices = new Float32Array([
+                0.35, 0.4, 0.8,
+                0.35, 0.4, -1,
+                2.2, 0.38, 0.1,
+                2.2, 0.38, -0.7,
+                
+                0.35, 0.32, 0.8,
+                0.35, 0.32, -1,
+                2.2, 0.3, 0.1,
+                2.2, 0.3, -0.7,
+            ]);
+            
+            rightWingGeometry.setAttribute('position', new THREE.BufferAttribute(rightWingVertices, 3));
+            rightWingGeometry.setIndex(wingIndices);
+            rightWingGeometry.computeVertexNormals();
+            
+            const rightWing = new THREE.Mesh(rightWingGeometry, paperMaterial);
+            plane.add(rightWing);
+
+            // Aileron vertical arrière avec volume
+            const finGeometry = new THREE.BufferGeometry();
+            const finVertices = new Float32Array([
+                // Face avant
+                -0.08, 0.4, -1,
+                0.08, 0.4, -1,
+                0, 0.55, -1.15,
+                
+                // Face arrière
+                -0.08, 0.4, -1.05,
+                0.08, 0.4, -1.05,
+                0, 0.55, -1.2,
+            ]);
+            
+            const finIndices = [
+                // Face avant
+                0, 1, 2,
+                // Face arrière
+                3, 5, 4,
+                // Côtés
+                0, 3, 4, 0, 4, 1,
+                1, 4, 5, 1, 5, 2,
+                2, 5, 3, 2, 3, 0
+            ];
+            
+            finGeometry.setAttribute('position', new THREE.BufferAttribute(finVertices, 3));
+            finGeometry.setIndex(finIndices);
+            finGeometry.computeVertexNormals();
+            
+            const fin = new THREE.Mesh(finGeometry, paperMaterial);
+            plane.add(fin);
+
+            return plane;
+        }
+
+        function initThreeScene(containerId, createObjectFunc) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.error('Container not found:', containerId);
+                return;
+            }
+
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            const scene = new THREE.Scene();
+
+            const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+            camera.position.set(4, 2.5, 5);
+            camera.lookAt(0, 0, 0);
+
+            const renderer = new THREE.WebGLRenderer({ 
+                antialias: true, 
+                alpha: true 
+            });
+            renderer.setSize(width, height);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // Éclairage amélioré
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+
+            const mainLight = new THREE.DirectionalLight(0xffffff, 1.0);
+            mainLight.position.set(5, 8, 4);
+            mainLight.castShadow = true;
+            scene.add(mainLight);
+
+            const fillLight = new THREE.DirectionalLight(0x6db3f2, 0.4);
+            fillLight.position.set(-5, 2, -3);
+            scene.add(fillLight);
+
+            const rimLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            rimLight.position.set(0, -2, -5);
+            scene.add(rimLight);
+
+            const planeObj = createObjectFunc();
+            scene.add(planeObj);
+
+            // Animation fluide et élégante
+            let time = 0;
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                time += 0.008;
+                
+                // Rotation principale douce
+                planeObj.rotation.y = time * 0.5;
+                
+                // Mouvement de vol naturel
+                planeObj.rotation.x = Math.sin(time * 0.8) * 0.15 - 0.2;
+                planeObj.rotation.z = Math.cos(time * 0.6) * 0.08;
+                
+                // Léger mouvement vertical
+                planeObj.position.y = Math.sin(time * 0.7) * 0.2;
+                
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                const newWidth = container.clientWidth;
+                const newHeight = container.clientHeight;
+                camera.aspect = newWidth / newHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(newWidth, newHeight);
+            });
+        }
+
+        window.addEventListener('load', () => {
+            if (typeof THREE === 'undefined') {
+                console.error('THREE.js n\'est pas chargé!');
+                return;
+            }
+            console.log('Initialisation de l\'avion 3D...');
+            initThreeScene('three-plane', createPaperPlane);
+        });
+    
+    </script>
 </body>
 </html>
